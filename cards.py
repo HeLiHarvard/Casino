@@ -36,6 +36,15 @@ class Deck:
     def pick_random(self):
         return self.deck.pop(random.randrange(len(self.deck)))
 
+    def add(self, cards):
+        self.deck.append(cards)
+
+    def remove(self, card):
+        try:
+            self.deck.remove(card)
+        except ValueError:
+            print("That card is not in the deck!")
+
     def refresh(self):
         """
         Makes the deck what it was initialized to be again
