@@ -11,10 +11,13 @@ class Card:
 
 class Deck:
     # n is number of standard decks
-    def __init__(self, n):
+    def __init__(self, n = 1):
         suits = ['diamonds', 'hearts', 'spades', 'clubs']
+        faces = ['jack', 'queen', 'king', 'ace']
         # odeck is a deck with all the cards originally in it, unmodified
-        self.odeck = [Card(i, j) for i in range(1, 14) for j in suits] * n
+        self.odeck = [Card(i, j) for i in range(2, 11) for j in suits]
+        self.odeck.extend([Card(i, j) for i in faces for j in suits])
+        self.odeck = self.odeck * n
         # deck is the deck that the methods work with
         self.deck = list(self.odeck)
 
