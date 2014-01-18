@@ -8,6 +8,9 @@ just you versus the dealer
 #      Display cash remaining and net earnings so far
 #      Dealer AI
 #      Win/Loss conditions
+#      Hit/Stand/Double/Split
+#      Use map to change all cards in the deck to have a third param?
+#          Called "actual value," i.e. King = 10
 
 
 import random
@@ -39,11 +42,30 @@ while proceed != "n":
         if card.value == 'ace':
             card.value = 11
 
+    dealer_total = sum(dealer_hand)
 
     your_hand = [deck.draw(), deck.draw()]
     print("You got a " + str(your_hand[0].value) + " of " + your_hand[0].suit, end = "")
     print(" and a " + str(your_hand[1].value) + " of " + your_hand[1].suit)
 
+    for card in your_hand:
+        if card.value in ['jack', 'queen', 'king']:
+            card.value = 10
+        if card.value == 'ace':
+            card.value = 11
+
+    your_total = sum(your_hand)
+
+    if dealer_total > 22:
+        print("Dealer busted! You win!")
+        cash += bet * 2
+        net earnings += bet
+    elif dealer_total == 22:
+        dealer_hand[0].value = 1
+    elif dealer_total == 21:
+        print("Dealer got a blackjack!")
+
+    print("Do you wish to [h]it or [s]tand? ")
 
     print("You have $" + cash + " left.")
     # also print net earnings, which are calculated depending on winning or losing
