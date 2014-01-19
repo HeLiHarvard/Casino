@@ -53,7 +53,7 @@ while proceed != "n":
 
     your_total = sum(card.custom_value for card in your_hand)
 
-    print("Your hand's point value is " + your_total)
+    print("Your hand's point value is " + str(your_total))
 
     if dealer_total == 22:
         dealer_hand[0].custom_value = 1
@@ -64,12 +64,12 @@ while proceed != "n":
             print("No money won or lost.")
         else:
             print("The dealer got a blackjack! You lose this round.")
-            print("You lost $" + bet)
+            print("You lost $" + str(bet))
             net_earnings -= bet
             cash -= bet
     elif your_total == 21:
         print("You got a blackjack and the dealer did not! You win this round.")
-        print("You won $" + bet)
+        print("You won $" + str(bet))
         net_earnings += bet
         cash += bet
 
@@ -82,15 +82,48 @@ while proceed != "n":
         print("You drew a " + new_card.value + " of " + new_card.suit)
         your_total += new_card.custom_value
         if your_total > 21 and any(c.value == 'ace' for c in your_hand):
+            your_total -= 10
+        print("Your hand's point value is " + str(your_total))
 
-        print("Your hand's point value is " + your_total)
+    if your_total > 21:
+        print("You have busted! You lose this round.")
+        print("You lost $" + str(bet))
+        net_earnings -= bet
+        cash -= bet
+    else:
+        while (dealer_total < 17 or
+              (dealer_total == 17 and any(c.value == 'ace' for c in dealer_hand))):
+            d_card = deck.draw()
+            dealer_hand.append(d_card)
+            dealer_total += d_card.custom_value
+            print("Dealer drew a " + d_card.value + " of " + d_card.suit)
+            if dealer_total > 21 and any(c.value == 'ace' for c in dealer_hand):
+                dealer_total -= 10
 
-    #DICTIONARY INSTEAD OF LIST FOR HANDS?
+        print("The dealer's hand's point value is " + str(dealer_total))
 
+        if dealer_total > 21:
+            print("The dealer busted! You win this round.")
+            print("You won $" + str(bet))
+            net_earnings += bet
+            cash += bet
+        else:
+            if your_total > dealer_total:
+                print("Your total is closer to 21! You win this round.")
+                print("You won $" + str(bet))
+                net_earnings += bet
+                cash += bet
+            elif your_total < dealer_total:
+                print("The dealer's total is closer to 21! You lose this round.")
+                print("You lost $" + str(bet))
+                net_earnings -= bet
+                cash -= bet
+            else:
+                print("You and the dealer tied!")
+                print("No money won or lost this round.")
 
-    print("You have $" + cash + " left.")
-    print("Your net earnings are $" + net_earnings)
-    # also print net earnings, which are calculated depending on winning or losing
+    print("You have $" + str(cash) + " left.")
+    print("Your net earnings are $" + str(net_earnings))
     proceed = input("Continue[y/n]? ")[0].lower()
 
 
