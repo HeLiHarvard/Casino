@@ -9,15 +9,26 @@ just you versus the dealer
 #      Dealer AI
 #      Win/Loss conditions
 #      Hit/Stand/Double/Split
-#      Use map to change all cards in the deck to have a third param?
-#          Called "actual value," i.e. King = 10
-
+#      ----Use map to change all cards in the deck to have a third param?
+#      ----    Called "actual value," i.e. King = 10
+#      Define the initial dealing as a function?
+#      Set up a loop for the actual playing
 
 import random
 import cards
 
+def set_custom_value(deck):
+    for card in deck:
+        if card.value in ['jack', 'queen', 'king']:
+            card.custom_value = 10
+        elif card.value == 'ace':
+            card.custom_value = 11
+        else:
+            card.custom_value = card.value
+
 deck = cards.Deck(6)
 deck.shuffle()
+set_custom_value(deck)
 
 print("Welcome to Blackjack!")
 cash = float(input("How much cash are you playing with today? $"))
@@ -30,44 +41,55 @@ while proceed != "n":
     while cash - bet < 0:
         bet = float(input("Not enough cash. Please enter a smaller bet: $"))
 
-    cash -= bet
-
     dealer_hand = [deck.draw(), deck.draw()]
     print("Dealer drew a " + str(dealer_hand[0].value) + " of " + dealer_hand[0].suit)
     print("Dealer also drew and placed a card facedown.")
 
-    for card in dealer_hand:
-        if card.value in ['jack', 'queen', 'king']:
-            card.value = 10
-        if card.value == 'ace':
-            card.value = 11
-
-    dealer_total = sum(dealer_hand)
+    dealer_total = sum(card.custom_value for card in dealer_hand)
 
     your_hand = [deck.draw(), deck.draw()]
     print("You got a " + str(your_hand[0].value) + " of " + your_hand[0].suit, end = "")
     print(" and a " + str(your_hand[1].value) + " of " + your_hand[1].suit)
 
-    for card in your_hand:
-        if card.value in ['jack', 'queen', 'king']:
-            card.value = 10
-        if card.value == 'ace':
-            card.value = 11
+    your_total = sum(card.custom_value for card in your_hand)
 
-    your_total = sum(your_hand)
+    print("Your hand's point value is " + your_total)
 
-    if dealer_total > 22:
-        print("Dealer busted! You win!")
-        cash += bet * 2
-        net earnings += bet
-    elif dealer_total == 22:
-        dealer_hand[0].value = 1
+    if dealer_total == 22:
+        dealer_hand[0].custom_value = 1
+        dealer_total = sum(card.custom_value for card in dealer_hand)
     elif dealer_total == 21:
-        print("Dealer got a blackjack!")
+        if your_total == 21:
+            print("You both got blackjacks! The result is a push.")
+            print("No money won or lost.")
+        else:
+            print("The dealer got a blackjack! You lose this round.")
+            print("You lost $" + bet)
+            net_earnings -= bet
+            cash -= bet
+    elif your_total == 21:
+        print("You got a blackjack and the dealer did not! You win this round.")
+        print("You won $" + bet)
+        net_earnings += bet
+        cash += bet
 
-    print("Do you wish to [h]it or [s]tand? ")
+    while your_total < 21:
+        choice = input("Do you wish to [h]it or [s]tand? ")
+        if choice[0].lower() == 's':
+            break
+        new_card = deck.draw()
+        your_hand.append(new_card)
+        print("You drew a " + new_card.value + " of " + new_card.suit)
+        your_total += new_card.custom_value
+        if your_total > 21 and any(c.value == 'ace' for c in your_hand):
+
+        print("Your hand's point value is " + your_total)
+
+    #DICTIONARY INSTEAD OF LIST FOR HANDS?
+
 
     print("You have $" + cash + " left.")
+    print("Your net earnings are $" + net_earnings)
     # also print net earnings, which are calculated depending on winning or losing
     proceed = input("Continue[y/n]? ")[0].lower()
 

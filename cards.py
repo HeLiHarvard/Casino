@@ -8,6 +8,7 @@ class Card:
     def __init__(self, value, suit):
         self.value = value
         self.suit = suit
+        self.custom_value = 0
 
 class Deck:
     # n is number of standard decks
@@ -22,7 +23,14 @@ class Deck:
         self.deck = list(self.odeck)
 
     def __iter__(self):
-        return self.deck
+        self.count = 0
+        return self
+
+    def __next__(self):
+        if self.count == len(self.deck):
+            raise StopIteration
+        self.count += 1
+        return self.deck[self.count - 1]
 
     def shuffle(self):
         random.shuffle(self.deck)
@@ -39,8 +47,8 @@ class Deck:
     def pick_random(self):
         return self.deck.pop(random.randrange(len(self.deck)))
 
-    def add(self, cards):
-        self.deck.append(cards)
+    def add_cards(self, cards):
+        self.deck.extend(cards)
 
     def remove(self, card):
         try:
