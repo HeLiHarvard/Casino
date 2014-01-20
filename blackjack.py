@@ -4,15 +4,8 @@
 This program runs a basic blackjack game. Currently it is
 just you versus the dealer.
 """
-# TBD: Shuffle at around 60% of the deck gone
-#      ----Display cash remaining and net earnings so far
-#      ----Dealer AI
-#      ----Win/Loss conditions
-#      ----Hit/Stand/Double/Split
-#      ----Use map to change all cards in the deck to have a third param?
-#      ----    Called "actual value," i.e. King = 10
-#      ----Define the initial dealing as a function?
-#      ----Set up a loop for the actual playing
+
+#CHECK DEALER HAND'S LOGIC AS WELL
 
 # Ideas for expansion:
 # MAKE A GENERATOR DECK!!!!!!******
@@ -25,21 +18,24 @@ just you versus the dealer.
 # Insurance (I've never heard, but apparently it's a thing)
 # Card counter for strategic help?
 
-import random
 import cards
 
 def set_custom_value(deck):
-    for card in deck:
+    d = list(deck)
+    for card in d:
         if card.value in ['jack', 'queen', 'king']:
             card.custom_value = 10
         elif card.value == 'ace':
             card.custom_value = 11
         else:
             card.custom_value = card.value
+    # Idea: make GenDeck have a method constructing a deck from a list
+    deck.deck = (card for card in d)
 
-deck = cards.Deck(6)
+deck = cards.GenDeck(6)
 deck.shuffle()
 set_custom_value(deck)
+deck_size = deck.cards_left()
 
 print("Welcome to Blackjack!")
 cash = float(input("How much cash are you playing with today? $"))
@@ -49,6 +45,8 @@ proceed = "y"
 
 while proceed != "n":
     # Shuffle when deck is more than 60% gone
+    if (deck.cards_left() / deck_size) < .4:
+        deck.shuffle()
 
     bet = float(input("Enter your bet for this round: $"))
     while cash - bet < 0:
@@ -94,7 +92,12 @@ while proceed != "n":
         your_hand.append(new_card)
         print("You drew a " + str(new_card.value) + " of " + new_card.suit)
         your_total += new_card.custom_value
+
         if your_total > 21 and any(c.value == 'ace' for c in your_hand):
+            for card in your_hand:
+                if card.value == 'ace':
+                    card.value = '1ace'
+                    break
             your_total -= 10
         print("Your hand's point value is " + str(your_total))
 
@@ -111,6 +114,10 @@ while proceed != "n":
             dealer_total += d_card.custom_value
             print("Dealer drew a " + str(d_card.value) + " of " + d_card.suit)
             if dealer_total > 21 and any(c.value == 'ace' for c in dealer_hand):
+                for card in dealer_hand:
+                    if card.value == 'ace':
+                        card.value = '1ace'
+                        break
                 dealer_total -= 10
 
         print("The dealer's hand's point value is " + str(dealer_total))
