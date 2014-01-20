@@ -8,7 +8,7 @@ just you versus the dealer.
 #CHECK DEALER HAND'S LOGIC AS WELL
 
 # Ideas for expansion:
-# MAKE A GENERATOR DECK!!!!!!******
+# ----MAKE A GENERATOR DECK!!!!!!******
 # Multiple players
 # Let player choose number of decks
 # Let player control action line by line? e.g. dealer draws, continue
@@ -54,8 +54,8 @@ while proceed != "n":
         bet = float(input("Not enough cash. Please enter a smaller bet: $"))
 
     dealer_hand = [deck.draw(), deck.draw()]
-    print("Dealer drew a " + str(dealer_hand[0].value) + " of " + dealer_hand[0].suit)
-    print("Dealer also drew and placed a card facedown.")
+    print("Dealer drew a " + str(dealer_hand[0].value) + " of " + dealer_hand[0].suit
+           + " and placed a card facedown.")
 
     dealer_total = sum(card.custom_value for card in dealer_hand)
 
@@ -68,8 +68,8 @@ while proceed != "n":
     print("Your hand's point value is " + str(your_total))
 
     if dealer_total == 22:
-        dealer_hand[0].custom_value = 1
-        dealer_total = sum(card.custom_value for card in dealer_hand)
+        dealer_hand[0].value = '1ace'
+        dealer_total -= 10
     elif dealer_total == 21:
         if your_total == 21:
             print("You both got blackjacks! The result is a push.")
