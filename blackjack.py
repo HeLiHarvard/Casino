@@ -47,6 +47,7 @@ while proceed != "n":
     # Shuffle when deck is more than 60% gone
     if (deck.cards_left() / deck_size) < .4:
         deck.shuffle()
+        print("Deck has been re-shuffled!")
 
     bet = float(input("Enter your bet for this round: $"))
     while cash - bet < 0:
