@@ -6,6 +6,10 @@ just you versus the dealer.
 """
 
 #CHECK DEALER HAND'S LOGIC AS WELL
+# Shuffle not working
+# If dealer gets a blackjack, fix it so the round ends
+# Display cash and net earnings after the dealer gets a blackjack
+# Encapsulate both your and dealer logic into functions
 
 # Ideas for expansion:
 # ----MAKE A GENERATOR DECK!!!!!!******
@@ -32,7 +36,7 @@ def set_custom_value(deck):
     # Idea: make GenDeck have a method constructing a deck from a list
     deck.deck = (card for card in d)
 
-deck = cards.GenDeck(6)
+deck = cards.GenDeck()
 deck.shuffle()
 set_custom_value(deck)
 deck_size = deck.cards_left()
@@ -46,7 +50,7 @@ proceed = "y"
 while proceed != "n":
     # Shuffle when deck is more than 60% gone
     if (deck.cards_left() / deck_size) < .4:
-        deck.shuffle()
+        deck.refresh()
         print("Deck has been re-shuffled!")
 
     bet = float(input("Enter your bet for this round: $"))
@@ -70,7 +74,7 @@ while proceed != "n":
     if dealer_total == 22:
         dealer_hand[0].value = '1ace'
         dealer_total -= 10
-    elif dealer_total == 21:
+    if dealer_total == 21:
         if your_total == 21:
             print("You both got blackjacks! The result is a push.")
             print("No money won or lost.")
@@ -84,64 +88,64 @@ while proceed != "n":
         print("You won $" + str(bet))
         net_earnings += bet
         cash += bet
-
-    while your_total < 21:
-        choice = input("Do you wish to [h]it or [s]tand? ")
-        if choice[0].lower() == 's':
-            break
-        new_card = deck.draw()
-        your_hand.append(new_card)
-        print("You drew a " + str(new_card.value) + " of " + new_card.suit)
-        your_total += new_card.custom_value
-
-        if your_total > 21 and any(c.value == 'ace' for c in your_hand):
-            for card in your_hand:
-                if card.value == 'ace':
-                    card.value = '1ace'
-                    break
-            your_total -= 10
-        print("Your hand's point value is " + str(your_total))
-
-    if your_total > 21:
-        print("You have busted! You lose this round.")
-        print("You lost $" + str(bet))
-        net_earnings -= bet
-        cash -= bet
     else:
-        while (dealer_total < 17 or
-              (dealer_total == 17 and any(c.value == 'ace' for c in dealer_hand))):
-            d_card = deck.draw()
-            dealer_hand.append(d_card)
-            dealer_total += d_card.custom_value
-            print("Dealer drew a " + str(d_card.value) + " of " + d_card.suit)
-            if dealer_total > 21 and any(c.value == 'ace' for c in dealer_hand):
-                for card in dealer_hand:
+        while your_total < 21:
+            choice = input("Do you wish to [h]it or [s]tand? ")
+            if choice[0].lower() == 's':
+                break
+            new_card = deck.draw()
+            your_hand.append(new_card)
+            print("You drew a " + str(new_card.value) + " of " + new_card.suit)
+            your_total += new_card.custom_value
+
+            if your_total > 21 and any(c.value == 'ace' for c in your_hand):
+                for card in your_hand:
                     if card.value == 'ace':
                         card.value = '1ace'
                         break
-                dealer_total -= 10
+                your_total -= 10
+            print("Your hand's point value is " + str(your_total))
 
-        print("The dealer's hand's point value is " + str(dealer_total))
-
-        if dealer_total > 21:
-            print("The dealer busted! You win this round.")
-            print("You won $" + str(bet))
-            net_earnings += bet
-            cash += bet
+        if your_total > 21:
+            print("You have busted! You lose this round.")
+            print("You lost $" + str(bet))
+            net_earnings -= bet
+            cash -= bet
         else:
-            if your_total > dealer_total:
-                print("Your total is closer to 21! You win this round.")
+            while (dealer_total < 17 or
+                  (dealer_total == 17 and any(c.value == 'ace' for c in dealer_hand))):
+                d_card = deck.draw()
+                dealer_hand.append(d_card)
+                dealer_total += d_card.custom_value
+                print("Dealer drew a " + str(d_card.value) + " of " + d_card.suit)
+                if dealer_total > 21 and any(c.value == 'ace' for c in dealer_hand):
+                    for card in dealer_hand:
+                        if card.value == 'ace':
+                            card.value = '1ace'
+                            break
+                    dealer_total -= 10
+
+            print("The dealer's hand's point value is " + str(dealer_total))
+
+            if dealer_total > 21:
+                print("The dealer busted! You win this round.")
                 print("You won $" + str(bet))
                 net_earnings += bet
                 cash += bet
-            elif your_total < dealer_total:
-                print("The dealer's total is closer to 21! You lose this round.")
-                print("You lost $" + str(bet))
-                net_earnings -= bet
-                cash -= bet
             else:
-                print("You and the dealer tied!")
-                print("No money won or lost this round.")
+                if your_total > dealer_total:
+                    print("Your total is closer to 21! You win this round.")
+                    print("You won $" + str(bet))
+                    net_earnings += bet
+                    cash += bet
+                elif your_total < dealer_total:
+                    print("The dealer's total is closer to 21! You lose this round.")
+                    print("You lost $" + str(bet))
+                    net_earnings -= bet
+                    cash -= bet
+                else:
+                    print("You and the dealer tied!")
+                    print("No money won or lost this round.")
 
     print("You have $" + str(cash) + " left.")
     print("Your net earnings are $" + str(net_earnings))

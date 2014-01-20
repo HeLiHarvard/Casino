@@ -85,13 +85,12 @@ class GenDeck:
         return self
 
     def __next__(self):
-        self.numcards -= 1
         return next(self.deck)
 
     def draw(self):
         try:
-            return next(self.deck)
             self.numcards -= 1
+            return next(self.deck)
         except StopIteration:
             print("Deck is empty!")
 
