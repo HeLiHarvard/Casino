@@ -5,10 +5,10 @@ This module contains playing card and deck classes
 import random
 
 class Card:
-    def __init__(self, value, suit):
+    def __init__(self, value, suit, custom_value = 0):
         self.value = value
         self.suit = suit
-        self.custom_value = 0
+        self.custom_value = custom_value
 
 class Deck:
     # n is number of standard decks

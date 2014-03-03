@@ -4,26 +4,9 @@
 This program runs a basic blackjack game. Currently it is
 just you versus the dealer.
 """
-
-#CHECK DEALER HAND'S LOGIC AS WELL
-# Encapsulate both your and dealer logic into functions
-# Big problem: for some reason dealer drew > 50 points worth of cards,
-#     but I can't replicate the error for some reason
-# Put more stuff into functions
-
-# Ideas for expansion:
-# ----MAKE A GENERATOR DECK!!!!!!******
-# Multiple players
-# Let player choose number of decks
-# Let player control action line by line? e.g. dealer draws, continue
-# Double down
-# Split
-# Surrender (some games do this)
-# Insurance (I've never heard, but apparently it's a thing)
-# Card counter for strategic help?
-
 import cards
 
+#Set custom values for face cards and ace
 def set_custom_value(deck):
     d = list(deck)
     for card in d:
@@ -33,9 +16,9 @@ def set_custom_value(deck):
             card.custom_value = 11
         else:
             card.custom_value = card.value
-    # Idea: make GenDeck have a method constructing a deck from a list
     deck.deck = (card for card in d)
 
+#Draws cards and evaluates aces
 def play_hand(player_name, deck, player_hand, player_total):
     new_card = deck.draw()
     player_hand.append(new_card)
@@ -61,6 +44,7 @@ net_earnings = 0
 
 proceed = "y"
 
+#Main
 while proceed != "n":
     # Shuffle when deck is more than 60% gone
     if (deck.cards_left() / deck_size) < .4:
@@ -87,6 +71,7 @@ while proceed != "n":
 
     print("Your hand's point value is " + str(your_total))
 
+    #If someone wins at the initial draw
     if dealer_total == 22:
         dealer_hand[0] = cards.Card('1ace', dealer_hand[0].suit, 1)
         dealer_total -= 10
